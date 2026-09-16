@@ -94,7 +94,7 @@ jobs:
           EOF
 
           cat > config/package-lists/gaming.list.chroot <<'EOF'
-          steam-installer gamemode libgamemode0 libgamemodeauto0 mangohud gamescope
+          steam-installer gamemode libgamemode0 libgamemodeauto0 mangohud
           libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers vulkan-tools
           libsdl2-2.0-0 libopenal1 libfreetype6 zlib1g libnss3 libxss1
           mesa-va-drivers mesa-vdpau-drivers gstreamer1.0-plugins-good gstreamer1.0-libav
