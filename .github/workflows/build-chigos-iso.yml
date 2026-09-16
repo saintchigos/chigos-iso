@@ -102,6 +102,10 @@ jobs:
           pipewire-pulse wireplumber
           EOF
 
+          cat > config/package-lists/iso-tools.list.chroot <<'EOF'
+          genisoimage xorriso mtools syslinux-utils isolinux syslinux-common
+          EOF
+
       - name: Add VS Code repository
         run: |
           cd chigos
