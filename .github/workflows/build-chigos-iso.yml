@@ -46,7 +46,7 @@ jobs:
           lb config \
             --mode ubuntu \
             --distribution noble \
-            --architectures "amd64 i386" \
+            --architectures amd64 \
             --archive-areas "main restricted universe multiverse" \
             --linux-flavours generic \
             --binary-filesystem squashfs \
@@ -94,15 +94,11 @@ jobs:
           EOF
 
           cat > config/package-lists/gaming.list.chroot <<'EOF'
-          steam-installer gamemode libgamemode0 libgamemodeauto0 mangohud
+          gamemode libgamemode0 libgamemodeauto0 mangohud
           libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers vulkan-tools
-          libgl1-mesa-dri:i386 libvulkan1:i386 mesa-vulkan-drivers:i386
-          libsdl2-2.0-0 libsdl2-2.0-0:i386 libopenal1 libopenal1:i386
-          libfreetype6 zlib1g libnss3 libxss1
-          libasound2-plugins:i386 libpulse0:i386 libx11-6:i386 libxrandr2:i386
-          libxcursor1:i386 libxi6:i386 libxtst6:i386 libxext6:i386
+          libsdl2-2.0-0 libopenal1 libfreetype6 zlib1g libnss3 libxss1
           mesa-va-drivers mesa-vdpau-drivers gstreamer1.0-plugins-good gstreamer1.0-libav
-          wine winetricks pipewire-pulse wireplumber
+          pipewire-pulse wireplumber
           EOF
 
       - name: Add VS Code repository
