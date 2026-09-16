@@ -46,7 +46,7 @@ jobs:
           lb config \
             --mode ubuntu \
             --distribution noble \
-            --architectures amd64 \
+            --architectures "amd64 i386" \
             --archive-areas "main restricted universe multiverse" \
             --linux-flavours generic \
             --binary-filesystem squashfs \
@@ -141,17 +141,6 @@ jobs:
           echo "vm.swappiness=10" >> /etc/sysctl.d/99-chigos.conf
           EOF
           chmod +x config/hooks/chroot/9999-cleanup.chroot
-
-      - name: Enable 32-bit architecture (Steam needs steam-libs-i386)
-        run: |
-          cd chigos
-          mkdir -p config/hooks/chroot
-          cat > config/hooks/chroot/0001-i386.chroot <<'EOF'
-          #!/bin/bash
-          dpkg --add-architecture i386
-          apt-get update
-          EOF
-          chmod +x config/hooks/chroot/0001-i386.chroot
 
       - name: Build the ISO (long step)
         run: |
