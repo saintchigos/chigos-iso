@@ -50,6 +50,7 @@ jobs:
             --archive-areas "main restricted universe multiverse" \
             --linux-flavours generic \
             --bootloader grub-efi \
+            --binary-images iso \
             --binary-filesystem squashfs \
             --bootappend-live "boot=live components quiet splash"
 
@@ -151,9 +152,9 @@ jobs:
       - name: Verify + package artifact
         run: |
           cd chigos
-          ls -lh *.iso
-          test -f live-image-amd64.hybrid.iso -o -f live-image-amd64.img || { echo "ISO not found"; ls -la; exit 1; }
-          f=$(ls -1 live-image-amd64.hybrid.iso live-image-amd64.img 2>/dev/null | head -1)
+          ls -lh
+          f=$(ls -1 live-image*.iso binary*.iso 2>/dev/null | head -1)
+          test -n "$f" || { echo "ISO not found"; ls -la; exit 1; }
           mv "$f" chigos-live.iso
 
       - name: Upload chigos-live.iso
