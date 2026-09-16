@@ -96,7 +96,11 @@ jobs:
           cat > config/package-lists/gaming.list.chroot <<'EOF'
           steam-installer gamemode libgamemode0 libgamemodeauto0 mangohud
           libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers vulkan-tools
-          libsdl2-2.0-0 libopenal1 libfreetype6 zlib1g libnss3 libxss1
+          libgl1-mesa-dri:i386 libvulkan1:i386 mesa-vulkan-drivers:i386
+          libsdl2-2.0-0 libsdl2-2.0-0:i386 libopenal1 libopenal1:i386
+          libfreetype6 zlib1g libnss3 libxss1
+          libasound2-plugins:i386 libpulse0:i386 libx11-6:i386 libxrandr2:i386
+          libxcursor1:i386 libxi6:i386 libxtst6:i386 libxext6:i386
           mesa-va-drivers mesa-vdpau-drivers gstreamer1.0-plugins-good gstreamer1.0-libav
           wine winetricks pipewire-pulse wireplumber
           EOF
@@ -137,6 +141,17 @@ jobs:
           echo "vm.swappiness=10" >> /etc/sysctl.d/99-chigos.conf
           EOF
           chmod +x config/hooks/chroot/9999-cleanup.chroot
+
+      - name: Enable 32-bit architecture (Steam needs steam-libs-i386)
+        run: |
+          cd chigos
+          mkdir -p config/hooks/chroot
+          cat > config/hooks/chroot/0001-i386.chroot <<'EOF'
+          #!/bin/bash
+          dpkg --add-architecture i386
+          apt-get update
+          EOF
+          chmod +x config/hooks/chroot/0001-i386.chroot
 
       - name: Build the ISO (long step)
         run: |
