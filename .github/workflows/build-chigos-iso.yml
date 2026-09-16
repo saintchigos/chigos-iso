@@ -50,14 +50,17 @@ jobs:
             --archive-areas "main restricted universe multiverse" \
             --linux-flavours generic \
             --binary-filesystem squashfs \
-            --bootappend-live "boot=live components quiet splash" \
-            --bootappend-install "locale=en_US.UTF-8" \
-            --packages "linux-image-generic linux-headers-generic"
+            --bootappend-live "boot=live components quiet splash"
 
       - name: Package lists (GNOME desktop + Chigos toolset)
         run: |
           cd chigos
           mkdir -p config/package-lists
+
+          cat > config/package-lists/kernel.list.chroot <<'EOF'
+          linux-image-generic
+          linux-headers-generic
+          EOF
 
           cat > config/package-lists/desktop.list.chroot <<'EOF'
           gdm3 gnome-shell ubuntu-session gnome-terminal nautilus gnome-control-center
