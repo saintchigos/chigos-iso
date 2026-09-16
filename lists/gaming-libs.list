@@ -1,0 +1,44 @@
+# Chigos OS - gaming library packages (consumed by 06-gaming.sh)
+# One package per line; # = comment. Mix of amd64 + i386.
+# The main script installs the critical libs inline; this adds more.
+
+# Steam / Proton dependency extras
+lib32gcc-s1
+libgl1-mesa-dri
+libsdl2-2.0-0
+libsdl2-net-2.0-0
+libopenal1
+libopenal1:i386
+libpulse-mainloop-glib0
+libpulse0:i386
+libasound2:i386
+libfreetype6:i386
+libgtk2.0-0:i386
+zlib1g:i386
+libnss3:i386
+libxss1:i386
+libxtst6:i386
+ocl-icd-libopencl1:amd64
+ocl-icd-libopencl1:i386
+
+# Controller / input
+joystick
+jstest-gtk
+xboxdrv
+
+# Audio
+pulseaudio
+pipewire-pulse
+wireplumber
+
+# Graphics / capture
+obs-studio
+simplescreenrecorder
+gpu-top
+radeontop
+mesa-utils
+
+# Misc
+libvirt-gl
+libgsettings-qt
+gir1.2-gst-plugins-base-1.0

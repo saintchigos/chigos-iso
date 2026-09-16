@@ -1,0 +1,43 @@
+# Chigos OS - GNOME defaults (installed to /usr/share/glib-2.0/schemas/50_chigos.gschema.override)
+# Applied to all NEW users via dconf defaults. Wallpapers are generated PNGs.
+
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/chigos/wallpaper-chigos-dark.png'
+picture-uri-dark='file:///usr/share/backgrounds/chigos/wallpaper-chigos-dark.png'
+primary-color='#0b0e14'
+secondary-color='#0b0e14'
+picture-options='zoom'
+
+[org.gnome.desktop.screensaver]
+picture-uri='file:///usr/share/backgrounds/chigos/wallpaper-chigos-blue.png'
+
+[org.gnome.desktop.interface]
+color-scheme='prefer-dark'
+gtk-theme='Yaru-dark'
+icon-theme='Papirus-Dark'
+cursor-theme='Yaru'
+font-name='Ubuntu 11'
+document-font-name='Ubuntu 11'
+monospace-font-name='Ubuntu Mono 13'
+enable-animations=true
+clock-show-date=true
+
+[org.gnome.desktop.wm.preferences]
+button-layout='appmenu:minimize,maximize,close'
+titlebar-font='Ubuntu Bold 11'
+
+[org.gnome.shell.extensions.dash-to-dock]
+dash-max-icon-size=32
+dock-fixed=true
+dock-position='BOTTOM'
+transparency-mode='FIXED'
+background-opacity=0.85
+
+[org.gnome.shell]
+favorite-apps=['org.gnome.Nautilus.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'kitty.desktop', 'firefox.desktop', 'steam.desktop', 'org.gnome.Software.desktop', 'snap-store_ubuntu-software.desktop']
+
+[org.gnome.nautilus]
+show-hidden-files=false
+
+[org.gnome.desktop.session]
+idle-delay=uint32 300

@@ -1,0 +1,49 @@
+# Chigos OS - extra security tool packages (optional extras)
+# Consumed by 02-security-tools.sh alongside the core toolset.
+# One package per line; # starts a comment.
+# ONLY packages that exist in Ubuntu 24.04 repos are listed here.
+
+# Web / vuln extras
+testssl.sh
+gvm
+openvas-scanner
+
+# Decompression / archive forensics
+p7zip-full
+unrar
+cabextract
+
+# Stego / crypto
+outguess
+ccrypt
+
+# File forensics
+vinetto
+extundelete
+magicrescue
+scrounge-ntfs
+hashdeep
+ssdeep
+
+# Reporting
+pandoc
+wkhtmltopdf
+
+# Network helpers
+net-tools
+dnsmap
+ndiff
+nast
+
+# SDR / RF
+rtl-sdr
+gqrx-sdr
+
+# Wireshark companions
+ngrep
+netsniff-ng
+
+# Misc pentesting
+packeth
+tcpflow
+t50

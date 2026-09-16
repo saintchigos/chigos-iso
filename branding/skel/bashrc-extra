@@ -1,0 +1,80 @@
+# Chigos OS - shell extras (sourced from /etc/skel/.bashrc via .bashrc-extra)
+
+# ---- Appearance ------------------------------------------------------------
+export EDITOR=nvim
+alias v='nvim'
+
+# ---- Navigation / files ----------------------------------------------------
+alias ls='ls --color=auto'
+alias ll='ls -lAhF --color=auto'
+alias la='ls -AlhF --color=auto'
+alias l='ls -lhF --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias c='clear'
+alias t='tree -C'
+
+# ---- Git -------------------------------------------------------------------
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias glog='git log --oneline --graph --all -20'
+
+# ---- System ----------------------------------------------------------------
+alias update='sudo apt update && sudo apt upgrade -y'
+alias install='sudo apt install'
+alias search='apt search'
+alias free='free -h'
+alias df='df -h'
+alias du='du -sh * | sort -h'
+alias fixgit='sudo chmod 755 /root'
+
+# ---- Chigos tools shortcuts -------------------------------------------------
+alias hack='chigos-hack-menu'
+alias tools='chigos-tools'
+alias gpu-setup='sudo chigos-gpu-setup'
+alias steam-play='steam -no-browser +open steam://settings'
+alias run-game='chigos-run'
+
+# Tool category aliases (quick access)
+alias net='nmap --top-ports 100'
+alias osint='theHarvester'
+alias crack='john'
+alias webscan='nikto'
+
+# ---- Security helper functions ----------------------------------------------
+chigos-tools() {
+  echo "Chigos tool categories:"
+  echo "  network:  nmap  masscan  netdiscover  arp-scan  tcpdump  wireshark"
+  echo "  web:      sqlmap  ffuf  gobuster  nikto  nuclei  zaproxy  burpsuite"
+  echo "  exploit:  metasploit  msfconsole  hydra  john  hashcat  netexec"
+  echo "  forensics: autopsy  sleuthkit  foremost  binwalk  exiftool  ghidra"
+  echo "  osint:    theHarvester  sherlock  enum4linux  whois  dnsrecon"
+  echo "  wireless: aircrack-ng  wifite  reaver  kismet  hcxtools"
+  echo ""
+  echo "Run any tool with: sudo <tool>      (help: <tool> --help)"
+}
+
+chigos-hack-menu() {
+  read -r -p "Category (web/network/password/wireless/osint): " cat
+  case "$cat" in
+    web)      chigos-tools | grep 'web:      ' ;;
+    network)  chigos-tools | grep 'network:  ' ;;
+    password) chigos-tools | grep 'exploit:  ' ;;
+    wireless) chigos-tools | grep 'wireless: ' ;;
+    osint)    chigos-tools | grep 'osint:    ' ;;
+    *)        echo "Unknown category" ;;
+  esac
+}
+
+# ---- Misc -------------------------------------------------------------------
+alias caffeinate='caffeinate -i &'
+alias htop='htop'
+alias neofetch='neofetch --ascii_distro ubuntu'
+alias fetch='fastfetch||neofetch'
+alias docker-clean='docker system prune -af'
+
+printf '\033[0;32mChigos OS ready.\033[0m Quick help: type "chigos-tools"\n'

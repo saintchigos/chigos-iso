@@ -1,0 +1,59 @@
+# Chigos OS - development toolchain extras (consumed by 04-dev-tools.sh)
+# One package per line; # = comment. All must exist in Ubuntu 24.04 repos.
+
+# Editors / IDEs helper libs
+vim-nox
+xclip
+xsel
+
+# Version control
+git-lfs
+mercurial
+
+# Languages
+default-jdk
+jupyter-notebook
+python3-tk
+python3-setuptools
+python3-dev
+
+# DB tooling
+sqlitebrowser
+postgresql-client
+redis-tools
+
+# Networking / APIs
+curl
+httpie
+
+# Containers / cloud
+podman
+buildah
+helm
+
+# Docs / productivity
+texlive-latex-base
+texlive-latex-extra
+texlive-fonts-recommended
+texlive-lang-english
+
+# Utility
+tree
+ncdu
+duf
+exa
+bat
+fzf
+zoxide
+fasd
+
+# Reverse engineering (CTF friendly)
+gcc-multilib
+libc6-dbg
+valgrind
+
+# Sysadmin
+systemd-container
+debootstrap
+virt-manager
+qemu-system-x86

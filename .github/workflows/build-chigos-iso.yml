@@ -1,0 +1,161 @@
+# =============================================================================
+#  Chigos OS — Cloud ISO Builder
+#  Runs for free on GitHub Actions. Produces a bootable chigos-live.iso that
+#  you download, flash to USB with Rufus, and boot.
+#
+#  HOW TO USE (10 minutes):
+#   1. Create a free account at github.com
+#   2. Install GitHub Desktop -> Add local folder -> C:\Users\chigo\chigos-build
+#   3. Publish the repo (Public), name it chigos-iso
+#   4. Actions -> "Chigos ISO Build" -> Run workflow
+#   5. In ~1-2 hours the green run has an "chigos-iso" artifact -> chigos-live.iso
+#   6. Flash with Rufus (https://rufus.ie) to a 16 GB+ USB -> boot -> Try Chigos
+#
+#  Smaller/faster ISO: set CHIGOS_LITE to '1'.
+# =============================================================================
+
+name: Chigos ISO Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+env:
+  CHIGOS_LITE: '0'
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout build kit
+        uses: actions/checkout@v4
+
+      - name: Install ISO build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq live-build debootstrap xorriso \
+            squashfs-tools mtools grub-efi-amd64-bin grub-pc-bin \
+            syslinux-common isolinux genisoimage wget curl
+
+      - name: Configure live-build
+        run: |
+          set -e
+          mkdir -p chigos && cd chigos
+          lb config \
+            --mode ubuntu \
+            --distribution noble \
+            --architectures amd64 \
+            --archive-areas "main restricted universe multiverse" \
+            --linux-flavours generic \
+            --binary-filesystem squashfs \
+            --bootappend-live "boot=live components quiet splash" \
+            --bootappend-install "locale=en_US.UTF-8" \
+            --packages "linux-image-generic linux-headers-generic"
+
+      - name: Package lists (GNOME desktop + Chigos toolset)
+        run: |
+          cd chigos
+          mkdir -p config/package-lists
+
+          cat > config/package-lists/desktop.list.chroot <<'EOF'
+          gdm3 gnome-shell ubuntu-session gnome-terminal nautilus gnome-control-center
+          gnome-tweaks gnome-shell-extensions yaru-theme-gnome-shell papirus-icon-theme
+          xserver-xorg xserver-xorg-video-all x11-utils network-manager xdg-utils
+          pipewire-pulse wireplumber epiphany-browser gvfs-backends gvfs-fuse
+          bash-completion
+          EOF
+
+          cat > config/package-lists/security.list.chroot <<'EOF'
+          nmap masscan netdiscover arp-scan fping hping3 traceroute tcpdump netcat-openbsd socat
+          dnsutils dnsenum whois iproute2 ethtool iw wireless-tools nftables fail2ban tshark
+          wireshark dsniff python3-scapy mitmproxy macchanger nikto nuclei lynis ssh-audit
+          sslscan sqlmap dirb gobuster ffuf wfuzz recon-ng wapiti whatweb exploitdb
+          python3-impacket john hashcat hydra medusa ncrack crunch cewl fcrackzip hashid
+          aircrack-ng kismet wifite reaver pixiewps hcxtools cowpatty hostapd bluez
+          sleuthkit foremost scalpel testdisk photorec dcfldd ddrescue ewf-tools yara
+          steghide libimage-exiftool-perl mat2 binwalk gdb radare2 rizin edb-debugger
+          binutils elfutils strace ltrace file theharvester enum4linux smbclient smbmap
+          ccrypt gpg tor proxychains4 htop neofetch testssl.sh pandoc wkhtmltopdf net-tools
+          libreoffice-writer libreoffice-calc aria2
+          EOF
+
+          cat > config/package-lists/dev.list.chroot <<'EOF'
+          build-essential gcc g++ make cmake python3 python3-pip python3-venv python-is-python3
+          git gitk curl wget jq ripgrep fd-find tmux neovim vim nano nodejs npm golang
+          openjdk-21-jdk sqlite3 sqlitebrowser postgresql-client sshfs openssh-client gnupg
+          htop btop tree locate sshpass rsync zsh zsh-autosuggestions zsh-syntax-highlighting
+          xclip xsel git-lfs valgrind httpie virt-manager qemu-system-x86 debootstrap fzf bat
+          duf ncdu zoxide
+          EOF
+
+          cat > config/package-lists/gaming.list.chroot <<'EOF'
+          steam-installer gamemode libgamemode0 libgamemodeauto0 mangohud gamescope
+          libgl1-mesa-dri libgl1-mesa-dri:i386 libgl1-mesa-glx libgl1-mesa-glx:i386
+          libvulkan1 libvulkan1:i386 mesa-vulkan-drivers mesa-vulkan-drivers:i386 vulkan-tools
+          libasound2-plugins:i386 libpulse0:i386 libsdl2-2.0-0 libsdl2-2.0-0:i386
+          libx11-6:i386 libxrandr2:i386 libxrender1:i386 libxi6:i386 libxtst6:i386
+          libxcursor1:i386 libxinerama1:i386 libxext6:i386 libxfixes3:i386
+          libgtk-x11-2.0-0:i386 libgdk-pixbuf-2.0-0:i386 libdbus-1-3:i386 libsqlite3-0:i386
+          libstdc++6:i386 libc6:i386 libcurl4:i386 libopenal1 libopenal1:i386
+          libfreetype6:i386 zlib1g:i386 libnss3:i386 libxss1:i386 lib32gcc-s1
+          mesa-va-drivers mesa-vdpau-drivers gstreamer1.0-plugins-good gstreamer1.0-libav
+          wine winetricks
+          EOF
+
+      - name: Add VS Code repository
+        run: |
+          cd chigos
+          mkdir -p config/archives
+          cat > config/archives/microsoft.list.chroot <<'EOF'
+          deb [trusted=yes arch=amd64] https://packages.microsoft.com/repos/code stable main
+          EOF
+
+      - name: Add VS Code package and OpenCode hook
+        run: |
+          cd chigos
+          cat >> config/package-lists/dev.list.chroot <<'EOF'
+          code
+          EOF
+          mkdir -p config/hooks/normal
+          cat > config/hooks/normal/0020-opencode.chroot <<'EOF'
+          #!/bin/bash
+          export DEBIAN_FRONTEND=noninteractive
+          curl -fsSL https://opencode.ai/install | bash || true
+          mkdir -p /opt/opencode
+          cp -r /root/.opencode/bin /opt/opencode/ 2>/dev/null || true
+          ln -sf /opt/opencode/bin/opencode /usr/local/bin/opencode 2>/dev/null || true
+          EOF
+          chmod +x config/hooks/normal/0020-opencode.chroot
+
+      - name: Lightweight cleanup hook (inside image)
+        run: |
+          cd chigos
+          mkdir -p config/hooks/chroot
+          cat > config/hooks/chroot/9999-cleanup.chroot <<'EOF'
+          #!/bin/bash
+          apt-get purge -y snapd 2>/dev/null || true
+          rm -f /var/lib/apt/lists/* /var/cache/apt/archives/*.deb 2>/dev/null || true
+          echo "vm.swappiness=10" >> /etc/sysctl.d/99-chigos.conf
+          EOF
+          chmod +x config/hooks/chroot/9999-cleanup.chroot
+
+      - name: Build the ISO (long step)
+        run: |
+          cd chigos
+          sudo lb build 2>&1 | tail -80
+
+      - name: Verify + package artifact
+        run: |
+          cd chigos
+          ls -lh *.iso
+          test -f live-image-amd64.hybrid.iso || { echo "ISO not found"; exit 1; }
+          mv live-image-amd64.hybrid.iso chigos-live.iso
+
+      - name: Upload chigos-live.iso
+        uses: actions/upload-artifact@v4
+        with:
+          name: chigos-iso
+          path: chigos/chigos-live.iso
+          if-no-files-found: error
