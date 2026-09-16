@@ -49,6 +49,7 @@ jobs:
             --architectures amd64 \
             --archive-areas "main restricted universe multiverse" \
             --linux-flavours generic \
+            --bootloader grub-efi \
             --binary-filesystem squashfs \
             --bootappend-live "boot=live components quiet splash"
 
@@ -147,8 +148,9 @@ jobs:
         run: |
           cd chigos
           ls -lh *.iso
-          test -f live-image-amd64.hybrid.iso || { echo "ISO not found"; exit 1; }
-          mv live-image-amd64.hybrid.iso chigos-live.iso
+          test -f live-image-amd64.hybrid.iso -o -f live-image-amd64.img || { echo "ISO not found"; ls -la; exit 1; }
+          f=$(ls -1 live-image-amd64.hybrid.iso live-image-amd64.img 2>/dev/null | head -1)
+          mv "$f" chigos-live.iso
 
       - name: Upload chigos-live.iso
         uses: actions/upload-artifact@v4
